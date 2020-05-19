@@ -22,8 +22,13 @@ class BaseBulletEnv(gym.Env):
 		self.scene = None
 		self.physicsClientId = -1
 		self.ownsPhysicsClient = 0
-		self.camera = Camera()
+		self.camera = Camera(self)
 		self.isRender = render
+		if self.isRender:
+			self._p = bullet_client.BulletClient(connection_mode=pybullet.GUI)
+		else:
+			self._p = bullet_client.BulletClient()
+
 		self.robot = robot
 		self._seed()
 		self._cam_dist = 3
@@ -122,11 +127,12 @@ class BaseBulletEnv(gym.Env):
 
 
 class Camera:
-	def __init__(self):
-		pass
+	def __init__(self, env):
+		self.env = env
 
 	def move_and_look_at(self,i,j,k,x,y,z):
 		lookat = [x,y,z]
 		distance = 10
 		yaw = 10
-		self._p.resetDebugVisualizerCamera(distance, yaw, -20, lookat)
+		# self.env._p.resetDebugVisualizerCamera(distance, yaw, -20, lookat)
+		self.env._p.resetDebugVisualizerCamera(distance, yaw, -10, lookat)
